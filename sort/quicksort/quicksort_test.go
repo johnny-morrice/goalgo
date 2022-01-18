@@ -36,7 +36,6 @@ func TestQuicksortBasic(t *testing.T) {
 }
 
 func TestQuicksortGenerated(t *testing.T) {
-	t.Skip()
 	cases := []TestCase{}
 	const numberOfCases = 1000
 	for i := 0; i < numberOfCases; i++ {
@@ -62,12 +61,10 @@ func doTestQuicksort(t *testing.T, cases []TestCase) {
 				copy(testCase.Sorted, testCase.Unsorted)
 				sort.Ints(testCase.Sorted)
 			}
+			Sort(testCase.Unsorted)
 			diff := deep.Equal(testCase.Sorted, testCase.Unsorted)
 			if diff != nil {
-				t.Fail()
-				for _, msg := range diff {
-					t.Log(msg)
-				}
+				t.Errorf("Expected %v but was %v", testCase.Sorted, testCase.Unsorted)
 			}
 		})
 	}
