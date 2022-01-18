@@ -1,6 +1,8 @@
 package quicksort
 
 import (
+	"fmt"
+	"math/rand"
 	"sort"
 	"testing"
 
@@ -33,6 +35,24 @@ func TestQuicksortBasic(t *testing.T) {
 	})
 }
 
+func TestQuicksortGenerated(t *testing.T) {
+	cases := []TestCase{}
+	const numberOfCases = 1000
+	for i := 0; i < numberOfCases; i++ {
+		length := rand.Intn(100) + 50
+		unsorted := make([]int, length)
+		for j := 0; j < len(unsorted); j++ {
+			unsorted[j] = rand.Intn(1000) - 500
+		}
+		testCase := TestCase{
+			Name:     fmt.Sprintf("Generated Test Case %v (length %v)", i, length),
+			Unsorted: unsorted,
+		}
+		cases = append(cases, testCase)
+	}
+	doTestQuicksort(t, cases)
+}
+
 func doTestQuicksort(t *testing.T, cases []TestCase) {
 	for _, testCase := range cases {
 		t.Run(testCase.Name, func(t *testing.T) {
@@ -41,13 +61,13 @@ func doTestQuicksort(t *testing.T, cases []TestCase) {
 				copy(testCase.Sorted, testCase.Unsorted)
 				sort.Ints(testCase.Sorted)
 			}
-		})
-		diff := deep.Equal(testCase.Sorted, testCase.Unsorted)
-		if diff != nil {
-			t.Fail()
-			for _, msg := range diff {
-				t.Log(msg)
+			diff := deep.Equal(testCase.Sorted, testCase.Unsorted)
+			if diff != nil {
+				t.Fail()
+				for _, msg := range diff {
+					t.Log(msg)
+				}
 			}
-		}
+		})
 	}
 }
